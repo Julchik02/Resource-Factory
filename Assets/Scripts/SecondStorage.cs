@@ -56,6 +56,10 @@ public class SecondStorage : MonoBehaviour
                 offsetConsumed -= 0.5f;
                 resourse.transform.parent = emptySpaceProduced;
             }
+            else if (madeResources.Count == _repositorySize)
+            {
+                UIManager.Instance.ShowNotification("Second production Storage is full");
+            }
             yield return new WaitForSeconds(1f);
         }
     

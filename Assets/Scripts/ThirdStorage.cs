@@ -43,6 +43,10 @@ public class ThirdStorage : MonoBehaviour
                 offsetResourses2 -= 0.5f;
                 offsetResourses1 -= 0.5f;
             }
+            else if (madeResources.Count == _repositorySize)
+            {
+                UIManager.Instance.ShowNotification("Third production Storage is full");
+            }
             yield return new WaitForSeconds(_timeBetweenResourceMade);
         }
 

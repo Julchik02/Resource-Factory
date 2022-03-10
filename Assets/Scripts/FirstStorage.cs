@@ -27,6 +27,10 @@ public class FirstStorage : MonoBehaviour
                 availableResources.Push(resource);
                 offset += 0.5f;
             }
+            else 
+            {
+                UIManager.Instance.ShowNotification("First production Storage is full");
+            }
             yield return new WaitForSeconds(_timeBetweenProduse);
         }
     }
