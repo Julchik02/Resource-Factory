@@ -10,8 +10,9 @@ public class Inventory : MonoBehaviour
     [SerializeField] Transform emptySpace;
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other);
-        PicUpResourse(other.gameObject);
+        Debug.Log(other.tag);
+        if (other.tag == "Produced") {PicUpResourse(other.gameObject); }
+        if (other.tag == "Consumed") { PutDownResources(other.gameObject); }
     }
 
     void PicUpResourse(GameObject repository)
@@ -27,6 +28,17 @@ public class Inventory : MonoBehaviour
             resourse.transform.position = emptySpace.position;
         }
        
+    }
+    void PutDownResources(GameObject repository)
+    {
+        if (inventoryResources.Count > 0)
+        {
+            var repo = repository.GetComponentInParent<SecondStorage>();
+            if (repo == null) return;
+            resourse = inventoryResources.Pop();
+            if (resourse == null) return;
+            repo.IncreaseResourses(resourse);
+            }
     }
 
 
