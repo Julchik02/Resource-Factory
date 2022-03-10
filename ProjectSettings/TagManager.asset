@@ -7,6 +7,10 @@ TagManager:
   - Joystic
   - Produced
   - Consumed
+  - Produced2
+  - Consumed2
+  - Recourses1
+  - Resourcec2
   layers:
   - Default
   - TransparentFX

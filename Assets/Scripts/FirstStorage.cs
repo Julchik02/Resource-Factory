@@ -7,37 +7,25 @@ public class FirstStorage : MonoBehaviour
     [SerializeField] Resourse _resorses1;
     [SerializeField] float _timeBetweenProduse;
     [SerializeField] int _repositorySize;
-    [SerializeField] GameObject _resoursesParent;
+    [SerializeField] Transform _resoursesParent;
     Stack<Resourse> availableResources = new Stack<Resourse>();
-    Vector3[] resoursesPositions;
+    float offset = 0;
 
     void Start()
     {
-        resoursesPositions = new Vector3[_repositorySize];
-        for (int j = 0; j < 2; j++)
-        {
-            for (int i = 0; i < _repositorySize / 2; i++)
-            {
-                resoursesPositions[j * _repositorySize / 2 + i] = new Vector3(-9f + 1.2f * j, 0.39f, 9.5f - 0.7f * i);
-            }
-        }
         StartCoroutine("ResoursesProduse");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
     IEnumerator ResoursesProduse()
     {
         while (true)
         {
             if (availableResources.Count < _repositorySize)
             {
-                Resourse resource = Instantiate(_resorses1, new Vector3(-9f, 0.39f, 9.5f), Quaternion.identity, _resoursesParent.transform);
-                //resource.transform.parent = _resoursesParent.transform;
+                Resourse resource = Instantiate(_resorses1, new Vector3(_resoursesParent.position.x, _resoursesParent.position.y, _resoursesParent.position.z - offset), Quaternion.identity);
+                resource.transform.parent = _resoursesParent.transform;
                 availableResources.Push(resource);
+                offset += 0.5f;
             }
             yield return new WaitForSeconds(_timeBetweenProduse);
         }
@@ -48,6 +36,7 @@ public class FirstStorage : MonoBehaviour
         if (availableResources.Count != 0)
         {
             var resource = availableResources.Pop();
+            offset -= 0.5f;
             return resource;
         }
         return null;
