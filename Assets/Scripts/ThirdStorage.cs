@@ -14,15 +14,15 @@ public class ThirdStorage : MonoBehaviour
     Stack<Resourse> avaibleResources1 = new Stack<Resourse>();
     Stack<Resourse> avaibleResources2 = new Stack<Resourse>();
     Stack<Resourse> madeResources = new Stack<Resourse>();
-    float offsetResourses1 = 0;
-    float offsetResourses2 = 0;
+    float offsetResourses1 = -0.5f;
+    float offsetResourses2 = -0.5f;
     float offsetResourses3 = 0;
     void Start()
     {
         StartCoroutine(ResourceMade());
     }
 
- 
+
     private IEnumerator ResourceMade()
     {
         while (true)
@@ -36,16 +36,16 @@ public class ThirdStorage : MonoBehaviour
                 var resourse2 = avaibleResources2.Pop();
                 Destroy(resourse2.gameObject);
                 resourse.transform.parent = emptySpaceResourses3;
-                resourse.transform.position = new Vector3(emptySpaceResourses3.position.x, 
-                                                           emptySpaceResourses3.position.y, 
+                resourse.transform.position = new Vector3(emptySpaceResourses3.position.x,
+                                                           emptySpaceResourses3.position.y,
                                                            emptySpaceResourses3.position.z - offsetResourses3);
                 offsetResourses3 += 0.5f;
                 offsetResourses2 -= 0.5f;
                 offsetResourses1 -= 0.5f;
-            }   
-        yield return new WaitForSeconds(_timeBetweenResourceMade);
+            }
+            yield return new WaitForSeconds(_timeBetweenResourceMade);
         }
-        
+
     }
     public bool SpaceCheck1()
     {
@@ -56,21 +56,28 @@ public class ThirdStorage : MonoBehaviour
         return avaibleResources2.Count < _repositorySize;
     }
     public void IncreaseResourses1(Resourse resourse)
-    {            
+    {
+        avaibleResources1.Push(resourse);
+    }
+    public Vector3 GetEmptySpace1(Resourse resourse)
+    {
         resourse.transform.parent = emptySpaceResourses1;
-        resourse.transform.position = new Vector3(emptySpaceResourses1.position.x,
+        offsetResourses1 += .5f;
+        return new Vector3(emptySpaceResourses1.position.x,
                                                   emptySpaceResourses1.position.y,
                                                   emptySpaceResourses1.position.z - offsetResourses1);
-        offsetResourses1 += .5f;
-        avaibleResources1.Push(resourse);
     }
     public void IncreaseResourses2(Resourse resourse)
     {
+        avaibleResources2.Push(resourse);
+    }
+    public Vector3 GetEmptySpace2(Resourse resourse)
+    {
         resourse.transform.parent = emptySpaceResourses2;
-        resourse.transform.position = new Vector3(emptySpaceResourses2.position.x,
+        offsetResourses2 += .5f;
+
+        return new Vector3(emptySpaceResourses2.position.x,
                                                    emptySpaceResourses2.position.y,
                                                    emptySpaceResourses2.position.z - offsetResourses2);
-        offsetResourses2 +=.5f;
-        avaibleResources2.Push(resourse);
     }
 }

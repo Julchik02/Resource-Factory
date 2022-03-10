@@ -4,98 +4,133 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
+    [SerializeField] int inventorySize = 5;
+    [SerializeField] Transform emptySpace;
+    [SerializeField] float moveSpeed = 4f;
     List<Resourse> inventoryResources1 = new List<Resourse>();
     List<Resourse> inventoryResources2 = new List<Resourse>();
     Resourse resource;
-    [SerializeField] int inventorySize = 5;
-    [SerializeField] Transform emptySpace;
+    bool transferInProgress;
+ 
     float offset = 0f;
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         
-        if (other.tag == "Produced") { PicUpResourse1(other.gameObject); }
-        if (other.tag == "Consumed") { PutDownResources1(other.gameObject); }
-        if (other.tag == "Produced2") { PicUpResourse2(other.gameObject); }
-        if (other.tag == "Consumed2") { PutDownResources2type2(other.gameObject); PutDownResources2type1(other.gameObject); }
+        if (other.tag == "Produced") { StartCoroutine(PicUpResourse1(other.gameObject)); }
+        if (other.tag == "Consumed") { StartCoroutine(PutDownResources1(other.gameObject)); }
+        if (other.tag == "Produced2") { StartCoroutine(PicUpResourse2(other.gameObject)); }
+        if (other.tag == "Consumed2") { StartCoroutine(PutDownResources2type2(other.gameObject)); StartCoroutine(PutDownResources2type1(other.gameObject)); }
     }
 
-    void PicUpResourse1(GameObject repository)
+    IEnumerator PicUpResourse1(GameObject repository)
     {
-        if (inventoryResources1.Count < inventorySize)
+        yield return new WaitUntil(() => !transferInProgress);
+        transferInProgress = true;
+        while (inventoryResources1.Count < inventorySize)
         {
             var repo = repository.GetComponentInParent<FirstStorage>();
-            if (repo == null) return;
+            if (repo == null) { transferInProgress = false; yield break; }
             resource = repo.DecreaseResourses();
-            if (resource == null) return;
+            if (resource == null) { transferInProgress = false; yield break; }
             inventoryResources1.Add(resource);
             resource.transform.parent = transform;
-            resource.transform.position = new Vector3(emptySpace.position.x, 
+            Vector3 endPosition = new Vector3(emptySpace.position.x, 
                                                         emptySpace.position.y + offset, 
                                                         emptySpace.position.z);
+            yield return StartCoroutine(MoveResources(resource, resource.transform.position, endPosition));
             offset += 0.5f;
         }
-
+        transferInProgress = false;
     }
-    void PutDownResources1(GameObject repository)
+    IEnumerator PutDownResources1(GameObject repository)
     {
-        if (inventoryResources1.Count > 0)
+        yield return new WaitUntil(() => !transferInProgress);
+        transferInProgress = true;
+        while (inventoryResources1.Count > 0)
         {
             var repo = repository.GetComponentInParent<SecondStorage>();
-            if (repo == null) return;
+            if (repo == null) { transferInProgress = false; yield break; }
             resource = inventoryResources1[inventoryResources1.Count - 1];
-            if (repo.SpaceCheck() == false) return;
+            if (repo.SpaceCheck() == false) { transferInProgress = false; yield break; }
             inventoryResources1.RemoveAt(inventoryResources1.Count - 1);
-            if (resource == null) return;
-            repo.IncreaseResourses(resource);
+            if (resource == null) { transferInProgress = false; yield break; };
+            Vector3 endPosition = repo.GetEmptySpace(resource);
+            yield return StartCoroutine(MoveResources(resource, resource.transform.position, endPosition));
             offset -= 0.5f;
+            repo.IncreaseResourses(resource);
         }
+        transferInProgress = false;
     }
 
-    void PicUpResourse2(GameObject repository)
+    IEnumerator PicUpResourse2(GameObject repository)
     {
-        if (inventoryResources2.Count < inventorySize)
+        yield return new WaitUntil(() => !transferInProgress);
+        transferInProgress = true;
+        while (inventoryResources2.Count < inventorySize)
         {
             var repo = repository.GetComponentInParent<SecondStorage>();
-            if (repo == null) return;
+            if (repo == null) { transferInProgress = false; yield break; }
             resource = repo.DecreaseResourses();
-            if (resource == null) return;
+            if (resource == null) { transferInProgress = false; yield break; }
             inventoryResources2.Add(resource);
             resource.transform.parent = transform;
-            resource.transform.position = new Vector3(emptySpace.position.x,
-                                                        emptySpace.position.y + offset,
-                                                        emptySpace.position.z);
+            Vector3 endPosition = new Vector3(emptySpace.position.x,
+                                                                   emptySpace.position.y + offset,
+                                                                   emptySpace.position.z);
+            yield return StartCoroutine(MoveResources(resource, resource.transform.position, endPosition));
             offset += 0.5f;
         }
+        transferInProgress = false;
 
     }
-    void PutDownResources2type2(GameObject repository)
+    IEnumerator PutDownResources2type2(GameObject repository)
     {
-        if (inventoryResources2.Count > 0)
+        yield return new WaitUntil(() => !transferInProgress);
+        transferInProgress = true;
+        while (inventoryResources2.Count > 0)
         {
             var repo = repository.GetComponentInParent<ThirdStorage>();
-            if (repo == null) return;
+            if (repo == null) { transferInProgress = false; yield break; }
             resource = inventoryResources2[inventoryResources2.Count - 1];
-            if (repo.SpaceCheck2() == false) return;
+            if (repo.SpaceCheck2() == false) { transferInProgress = false; yield break; }
             inventoryResources2.RemoveAt(inventoryResources2.Count - 1);
-            if (resource == null) return;
-            repo.IncreaseResourses2(resource);
+            if (resource == null) {transferInProgress = false; yield break;}
+            Vector3 endPosition = repo.GetEmptySpace2(resource);
             offset -= 0.5f;
+            yield return StartCoroutine(MoveResources(resource, resource.transform.position, endPosition));
+            repo.IncreaseResourses2(resource);
         }
-
+        transferInProgress = false;
     }
-    void PutDownResources2type1(GameObject repository)
+    IEnumerator PutDownResources2type1(GameObject repository)
     {
-        if (inventoryResources1.Count > 0)
+        yield return new WaitUntil(() => !transferInProgress);
+        transferInProgress = true;
+        while (inventoryResources1.Count > 0)
         {
             var repo = repository.GetComponentInParent<ThirdStorage>();
-            if (repo == null) return;
+            if (repo == null) { transferInProgress = false; yield break; }
             resource = inventoryResources1[inventoryResources1.Count - 1];
-            if (repo.SpaceCheck1() == false) return;
+            if (repo.SpaceCheck1() == false) { transferInProgress = false; yield break; }
             inventoryResources1.RemoveAt(inventoryResources1.Count - 1);
-            if (resource == null) return;
-            repo.IncreaseResourses1(resource);
+            if (resource == null) { transferInProgress = false; yield break; }
+            Vector3 endPosition = repo.GetEmptySpace1(resource);
             offset -= 0.5f;
+            yield return StartCoroutine(MoveResources(resource, resource.transform.position, endPosition));
+            repo.IncreaseResourses1(resource);
         }
+        transferInProgress = false;
+    }
+    private IEnumerator MoveResources(Resourse resource, Vector3 startPosition, Vector3 endPosition)
+    {
+        float step = 0f;
+        while (step <= 1)
+        {
+            resource.transform.position = Vector3.Lerp(startPosition, endPosition, step);
+            yield return null;
+            step += Time.deltaTime * moveSpeed;
+        }
+        resource.transform.position = endPosition;
     }
     
 }

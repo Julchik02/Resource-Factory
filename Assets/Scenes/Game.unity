@@ -483,6 +483,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventorySize: 5
   emptySpace: {fileID: 921682244}
+  moveSpeed: 5
 --- !u!1 &658798808
 GameObject:
   m_ObjectHideFlags: 0

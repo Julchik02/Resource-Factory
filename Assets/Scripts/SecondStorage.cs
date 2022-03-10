@@ -10,7 +10,7 @@ public class SecondStorage : MonoBehaviour
     [SerializeField] int _repositorySize;
     Stack<Resourse> availableResources = new Stack<Resourse>();
     Stack<Resourse> madeResources = new Stack<Resourse>();
-    float offsetConsumed = 0f;
+    float offsetConsumed = -0.5f;
     float offsetProduced = 0f;
     private void Start()
     {
@@ -28,11 +28,15 @@ public class SecondStorage : MonoBehaviour
     }
     public void IncreaseResourses(Resourse resourse)
     {
-        if(availableResources.Count < _repositorySize)
-        availableResources.Push(resourse);
+        availableResources.Push(resourse); 
+    }
+    public Vector3 GetEmptySpace(Resourse resourse)
+    {
         resourse.transform.parent = emptySpaseConsumed;
-        resourse.transform.position = new Vector3 (emptySpaseConsumed.position.x, emptySpaseConsumed.position.y, emptySpaseConsumed.position.z - offsetConsumed);
         offsetConsumed += 0.5f;
+        return new Vector3(emptySpaseConsumed.position.x,
+                            emptySpaseConsumed.position.y,
+                            emptySpaseConsumed.position.z - offsetConsumed);
     }
     public bool SpaceCheck()
     {
