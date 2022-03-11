@@ -31,17 +31,14 @@ public class PlayerInventory : MonoBehaviour
     {
         if (resoursesInInventory.Count == 0) return;
         FactoryManager factoryManager = repo.GetComponentInParent<FactoryManager>();
-        Resources resource = resoursesInInventory[resoursesInInventory.Count - 1];
         foreach (var item in factoryManager.RepositoryConsumingList)
         {
-            Resources.Type resoursesType = item.GetComponent<RepositoryConsuming>().ConsumingRecources.ResourceType;
+            Resources.Type resoursesType = item.ConsumingRecources.ResourceType;
             Resources resourceFound = resoursesInInventory.FindLast
-                (delegate (Resources resource)
-           {
-               return resource.ResourceType == resoursesType;
-           });
+            (res => res.ResourceType == resoursesType);
             if (resourceFound == null) return;
-            item.GetComponent<RepositoryConsuming>().IncreaseResources(resourceFound);
+            resoursesInInventory.Remove(resourceFound);
+            item.IncreaseResources(resourceFound);
         }
 
     }
