@@ -7,6 +7,7 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] int inventorySize = 10;
     [SerializeField] Transform resoursesPosition;
     List<Resources> resoursesInInventory = new List<Resources>();
+    float offset = 0;
 
 
     private void OnTriggerEnter(Collider other)
@@ -23,8 +24,10 @@ public class PlayerInventory : MonoBehaviour
         if (factoryManager.RepositoryProducting.GetResourcesCount() == 0) return;
         Resources resource = factoryManager.RepositoryProducting.DecreaseResources();
         resoursesInInventory.Add(resource);
-        resource.transform.position = resoursesPosition.position;
+        Vector3 pos = resoursesPosition.position;
+        resource.transform.position = new Vector3(pos.x, pos.y + offset, pos.z);
         resource.transform.parent = resoursesPosition;
+        offset += 0.5f;
     }
 
     void PutDownResources(GameObject repo)
@@ -39,6 +42,7 @@ public class PlayerInventory : MonoBehaviour
             if (resourceFound == null) continue;
             resoursesInInventory.Remove(resourceFound);
             item.IncreaseResources(resourceFound);
+            offset -= 0.5f;
         }
 
     }
