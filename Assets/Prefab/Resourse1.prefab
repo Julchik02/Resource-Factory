@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1908977533015662622}
   - component: {fileID: 1406768564793428171}
   - component: {fileID: 270577280847085996}
-  - component: {fileID: 409523619579117528}
+  - component: {fileID: -4772500507167154041}
   m_Layer: 0
   m_Name: Resourse1
   m_TagString: Recourses1
@@ -96,7 +96,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &409523619579117528
+--- !u!114 &-4772500507167154041
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -105,6 +105,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3381019066218619355}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 048d78934a1abb74bb9863f826a29d35, type: 3}
+  m_Script: {fileID: 11500000, guid: b047bfd4f1bfb4743b6c0043b7288dfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ResourceType: 1
