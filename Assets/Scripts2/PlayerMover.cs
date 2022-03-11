@@ -7,6 +7,7 @@ public class PlayerMover : MonoBehaviour
     MobileController _joystick;
     [SerializeField] float _moveSpeed = 1f;
     private Vector3 _moveVector;
+    public bool CanMove = true; 
     private void Start()
     {
         _joystick = GameObject.FindWithTag("Joystic").GetComponent<MobileController>();
@@ -14,9 +15,13 @@ public class PlayerMover : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _moveVector = Vector3.zero;
-        _moveVector.x = _joystick.Horizontal() * _moveSpeed * Time.deltaTime;
-        _moveVector.z = _joystick.Vertical() * _moveSpeed * Time.deltaTime;
-        transform.Translate(_moveVector);
+        if (CanMove)
+        {
+            _moveVector = Vector3.zero;
+            _moveVector.x = _joystick.Horizontal() * _moveSpeed * Time.deltaTime;
+            _moveVector.z = _joystick.Vertical() * _moveSpeed * Time.deltaTime;
+            transform.Translate(_moveVector);
+
+        }   
     }
 }

@@ -6,15 +6,19 @@ public class PlayerInventory : MonoBehaviour
 {
     [SerializeField] int inventorySize = 10;
     [SerializeField] Transform resoursesPosition;
+    PlayerMover playerMover;
     List<Resources> resoursesInInventory = new List<Resources>();
     [SerializeField] float moveSpeed = 4;
     float offset = 0;
     bool transferInProgress;
+    private void Start()
+    {
+        playerMover = GetComponent<PlayerMover>();
+    }
 
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log(other.tag);
         if (other.CompareTag("Produced")) { StartCoroutine(GrabResources(other.gameObject)); }
         if (other.CompareTag("Consumed")) { StartCoroutine(PutDownResources(other.gameObject)); }
     }
@@ -74,6 +78,7 @@ public class PlayerInventory : MonoBehaviour
     IEnumerator MoveResources(Resources resources, Vector3 startPosition, Vector3 endPosition)
     {
 
+        playerMover.CanMove = false;
         float step = 0f;
         while (step <= 1)
         {
@@ -83,5 +88,6 @@ public class PlayerInventory : MonoBehaviour
             step += Time.deltaTime * moveSpeed;
         }
         resources.transform.position = endPosition;
+        playerMover.CanMove = true;
     }
 }

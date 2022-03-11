@@ -39,6 +39,10 @@ public class FactoryManager : MonoBehaviour
                     Destroy(res.gameObject);
                 }
             }
+            else if(RepositoryProducting.GetResourcesCount() == _repositorySize)
+            {
+                UIManager.Instance.ShowNotification($"{gameObject.name} production Storage is full");
+            }
             yield return new WaitForSeconds(1f);
         }
 
