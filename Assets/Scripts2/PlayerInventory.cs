@@ -12,8 +12,8 @@ public class PlayerInventory : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log(other.tag);
-        if (other.tag == "Produced") { GrabResources(other.gameObject); }
-        if (other.tag == "Consumed") { PutDownResources(other.gameObject); }
+        if (other.CompareTag("Produced")) { GrabResources(other.gameObject); }
+        if (other.CompareTag("Consumed")) { PutDownResources(other.gameObject); }
     }
 
     void GrabResources(GameObject repo)
@@ -36,7 +36,7 @@ public class PlayerInventory : MonoBehaviour
             Resources.Type resoursesType = item.ConsumingRecources.ResourceType;
             Resources resourceFound = resoursesInInventory.FindLast
             (res => res.ResourceType == resoursesType);
-            if (resourceFound == null) return;
+            if (resourceFound == null) continue;
             resoursesInInventory.Remove(resourceFound);
             item.IncreaseResources(resourceFound);
         }
