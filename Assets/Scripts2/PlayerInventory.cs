@@ -36,8 +36,8 @@ public class PlayerInventory : MonoBehaviour
             resoursesInInventory.Add(resource);
             Vector3 pos = resoursesPosition.position;
             Vector3 endPosition = new Vector3(pos.x, pos.y + offset, pos.z);
-            yield return StartCoroutine(MoveResources(resource, resource.transform.position, endPosition));
             resource.transform.parent = resoursesPosition;
+            yield return StartCoroutine(MoveResources(resource, resource.transform.position, endPosition));
             offset += 0.5f;
         }
         transferInProgress = false;
@@ -63,9 +63,10 @@ public class PlayerInventory : MonoBehaviour
                     yield break;
                 }
                 resoursesInInventory.Remove(resourceFound);
-                Vector3 endPosition = item.IncreaseResources(resourceFound);
+                Vector3 endPosition = item.GetEndPosition(resourceFound);
                 yield return StartCoroutine(MoveResources(resourceFound, resourceFound.transform.position, endPosition));
                 offset -= 0.5f;
+                item.IncreaseResources(resourceFound);
             }
             transferInProgress = false;
         }
@@ -77,8 +78,8 @@ public class PlayerInventory : MonoBehaviour
         while (step <= 1)
         {
             resources.transform.position = Vector3.Lerp(startPosition, endPosition, step);
-            
-            yield return new WaitForSeconds(0.1f);
+
+            yield return null;
             step += Time.deltaTime * moveSpeed;
         }
         resources.transform.position = endPosition;

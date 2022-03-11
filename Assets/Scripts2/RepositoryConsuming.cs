@@ -9,15 +9,19 @@ public class RepositoryConsuming : MonoBehaviour
     Stack<Resources> consumedResources = new Stack<Resources>();
     public Resources ConsumingRecources => consumingRecources;
     float offset = 0;
-    public Vector3 IncreaseResources(Resources recources)
+    public void IncreaseResources(Resources recources)
     {
         consumedResources.Push(recources);
+    }
+    public Vector3 GetEndPosition(Resources recources)
+    { 
         Vector3 pos = positionRecources.position;
         Vector3 endPosition= new Vector3(pos.x, pos.y, pos.z - offset);
         recources.transform.parent = transform;
         offset += 0.5f;
         return endPosition;
     }
+
     public Resources DecreaseResources()
     {
         var res = consumedResources.Pop();
