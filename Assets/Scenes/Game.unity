@@ -451,8 +451,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6f170e275c4d694f9632d152f58a59b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventorySize: 10
+  inventorySize: 5
   resoursesPosition: {fileID: 921682244}
+  moveSpeed: 10
 --- !u!1 &651117148
 GameObject:
   m_ObjectHideFlags: 0

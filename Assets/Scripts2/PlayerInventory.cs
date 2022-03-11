@@ -7,6 +7,7 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] int inventorySize = 10;
     [SerializeField] Transform resoursesPosition;
     List<Resources> resoursesInInventory = new List<Resources>();
+    [SerializeField] float moveSpeed = 4;
     float offset = 0;
     bool transferInProgress;
 
@@ -15,18 +16,22 @@ public class PlayerInventory : MonoBehaviour
     {
         Debug.Log(other.tag);
         if (other.CompareTag("Produced")) { StartCoroutine(GrabResources(other.gameObject)); }
-        if (other.CompareTag("Consumed")) { PutDownResources(other.gameObject); }
+        if (other.CompareTag("Consumed")) { StartCoroutine(PutDownResources(other.gameObject)); }
     }
 
     IEnumerator GrabResources(GameObject repo)
     {
-        
+       
         yield return new WaitUntil(() => !transferInProgress);
         transferInProgress = true;
         while (resoursesInInventory.Count < inventorySize)
         {
             FactoryManager factoryManager = repo.GetComponentInParent<FactoryManager>();
-            if (factoryManager.RepositoryProducting.GetResourcesCount() == 0) yield break;
+            if (factoryManager.RepositoryProducting.GetResourcesCount() == 0)
+            {
+                transferInProgress = false;
+                yield break;
+            }
             Resources resource = factoryManager.RepositoryProducting.DecreaseResources();
             resoursesInInventory.Add(resource);
             Vector3 pos = resoursesPosition.position;
@@ -39,33 +44,43 @@ public class PlayerInventory : MonoBehaviour
 
     }
 
-    void PutDownResources(GameObject repo)
+    IEnumerator PutDownResources(GameObject repo)
     {
-        if (resoursesInInventory.Count == 0) return;
-        FactoryManager factoryManager = repo.GetComponentInParent<FactoryManager>();
-        foreach (var item in factoryManager.RepositoryConsumingList)
+        
+        yield return new WaitUntil(() => !transferInProgress);
+        transferInProgress = true;
+        while (resoursesInInventory.Count > 0)
         {
-            Resources.Type resoursesType = item.ConsumingRecources.ResourceType;
-            Resources resourceFound = resoursesInInventory.FindLast
-            (res => res.ResourceType == resoursesType);
-            if (resourceFound == null) continue;
-            resoursesInInventory.Remove(resourceFound);
-            item.IncreaseResources(resourceFound);
-            offset -= 0.5f;
+            FactoryManager factoryManager = repo.GetComponentInParent<FactoryManager>();
+            foreach (var item in factoryManager.RepositoryConsumingList)
+            {
+                Resources.Type resoursesType = item.ConsumingRecources.ResourceType;
+                Resources resourceFound = resoursesInInventory.FindLast
+                (res => res.ResourceType == resoursesType);
+                if (resourceFound == null)
+                {
+                    transferInProgress = false;
+                    yield break;
+                }
+                resoursesInInventory.Remove(resourceFound);
+                Vector3 endPosition = item.IncreaseResources(resourceFound);
+                yield return StartCoroutine(MoveResources(resourceFound, resourceFound.transform.position, endPosition));
+                offset -= 0.5f;
+            }
+            transferInProgress = false;
         }
-
     }
     IEnumerator MoveResources(Resources resources, Vector3 startPosition, Vector3 endPosition)
     {
 
-        float step = 0.25f;
+        float step = 0f;
         while (step <= 1)
         {
             resources.transform.position = Vector3.Lerp(startPosition, endPosition, step);
             
             yield return new WaitForSeconds(0.1f);
-            step += 0.25f;
+            step += Time.deltaTime * moveSpeed;
         }
         resources.transform.position = endPosition;
-         }
+        }
 }
