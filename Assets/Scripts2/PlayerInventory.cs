@@ -21,7 +21,7 @@ public class PlayerInventory : MonoBehaviour
 
     IEnumerator GrabResources(GameObject repo)
     {
-       
+
         yield return new WaitUntil(() => !transferInProgress);
         transferInProgress = true;
         while (resoursesInInventory.Count < inventorySize)
@@ -46,21 +46,21 @@ public class PlayerInventory : MonoBehaviour
 
     IEnumerator PutDownResources(GameObject repo)
     {
-        
+
         yield return new WaitUntil(() => !transferInProgress);
-        transferInProgress = true;
-        while (resoursesInInventory.Count > 0)
+        
+        FactoryManager factoryManager = repo.GetComponentInParent<FactoryManager>();
+        foreach (var item in factoryManager.RepositoryConsumingList)
         {
-            FactoryManager factoryManager = repo.GetComponentInParent<FactoryManager>();
-            foreach (var item in factoryManager.RepositoryConsumingList)
+            transferInProgress = true;
+            while (resoursesInInventory.Count > 0 && transferInProgress)
             {
                 Resources.Type resoursesType = item.ConsumingRecources.ResourceType;
                 Resources resourceFound = resoursesInInventory.FindLast
                 (res => res.ResourceType == resoursesType);
                 if (resourceFound == null)
                 {
-                    transferInProgress = false;
-                    yield break;
+                    break;
                 }
                 resoursesInInventory.Remove(resourceFound);
                 Vector3 endPosition = item.GetEndPosition(resourceFound);
@@ -83,5 +83,5 @@ public class PlayerInventory : MonoBehaviour
             step += Time.deltaTime * moveSpeed;
         }
         resources.transform.position = endPosition;
-        }
+    }
 }
